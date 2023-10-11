@@ -1,0 +1,55 @@
+cmake_minimum_required(VERSION 3.20)
+set(CMAKE_CXX_STANDARD 17)
+
+if (WIN32)
+    project(TodoList LANGUAGES CXX)
+elseif(UNIX)
+    project(TodoList)
+endif()
+
+set(CMAKE_CONFIGURATION_TYPES "Release;RelWithDebInfo" CACHE STRING "" FORCE)
+
+#======================= INCLUSION OF Qt =======================#
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_PREFIX_PATH $ENV{QTDIR})
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Widgets REQUIRED)
+find_package(Qt6Sql REQUIRED)
+find_package(Qt6Gui REQUIRED)
+
+#=================== INCLUSION OF Project Files ====================#
+set(FORMS_DIR "${CMAKE_SOURCE_DIR}/forms")
+set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
+
+include_directories(${FORMS_DIR})
+include_directories(${INCLUDE_DIR})
+include_directories(${SOURCE_DIR})
+
+file(GLOB_RECURSE SOURCES
+    "${FORMS_DIR}/*.ui"
+    "${INCLUDE_DIR}/*.h"
+    "${SOURCE_DIR}/*.cpp"
+)
+
+#=================== SETUP EXECTUABLE ====================#
+# Enable debug logging on RELWITHDEBINFO configuration
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
+    $<$<CONFIG:RELWITHDEBINFO>:QT_MESSAGELOGCONTEXT>
+)
+
+# Add the forms directory to the AUTOUIC search paths
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_AUTOUIC_SEARCH_PATHS} ${FORMS_DIR})
+
+add_executable(TodoList ${SOURCES} imgs.qrc)
+
+# Add the target includes for MY_PROJECT
+target_include_directories(TodoList PRIVATE ${FORMS_DIR})
+target_include_directories(TodoList PRIVATE ${INCLUDE_DIR})
+target_include_directories(TodoList PRIVATE ${SOURCE_DIR})
+
+#===================== LINKING LIBRARIES =======================#
+target_link_libraries(TodoList Qt6::Widgets Qt6::Sql Qt6::Gui)
