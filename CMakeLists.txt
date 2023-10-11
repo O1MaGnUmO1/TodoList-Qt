@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 
-if (WIN32)
-    project(TodoList LANGUAGES CXX)
-elseif(UNIX)
-    project(TodoList)
-endif()
+project(TodoList)
 
 set(CMAKE_CONFIGURATION_TYPES "Release;RelWithDebInfo" CACHE STRING "" FORCE)
 
