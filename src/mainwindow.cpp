@@ -86,15 +86,24 @@ void MainWindow::on_actionEdit_Task_triggered()
 // For delete task tool button
 void MainWindow::on_actionDelete_Task_triggered()
 {
-    int selectedRow = ui->tableView->currentIndex().row();
-    QMessageBox::StandardButton confirmation;
-    confirmation = QMessageBox::question(this, "Confirm Deletion", "Are you sure you want to delete this row?", QMessageBox::Yes | QMessageBox::No);
-    if( confirmation == QMessageBox::Yes){
-        model->removeRow(selectedRow);
-        ui->tableView->setVisible(false);
-        ui->tableView->resizeColumnsToContents();
-        ui->tableView->setVisible(true);
-        model->select();
+    QItemSelectionModel* selectionModel = ui->tableView->selectionModel();
+    if (selectionModel->hasSelection()) {
+        int selectedRow = ui->tableView->currentIndex().row();
+        QMessageBox::StandardButton confirmation;
+        confirmation = QMessageBox::question(this, "Confirm Deletion", "Are you sure you want to delete this row?", QMessageBox::Yes | QMessageBox::No);
+        if( confirmation == QMessageBox::Yes){
+            model->removeRow(selectedRow);
+            ui->tableView->setVisible(false);
+            ui->tableView->resizeColumnsToContents();
+            ui->tableView->setVisible(true);
+            model->select();
+        }
+    } else {
+        QMessageBox::information(
+            ui->tableView,
+            "No Selection",
+            "Please select a field in the table."
+        );
     }
 }
 
@@ -138,38 +147,48 @@ void MainWindow::showInsertionDialog() {
 // Functionality of showing update dialog when we want to update task
 void MainWindow::showUpdateDialog()
 {
-    auto current = ui->tableView->currentIndex().model();
-    int row = ui->tableView->currentIndex().row();
-    updateDialog = new QDialog(this);
-    updateDialog->setWindowTitle("Update Selected Task");
-    updateDialog->setMinimumWidth(450);
+    QItemSelectionModel* selectionModel = ui->tableView->selectionModel();
 
-    QPushButton* submitButton = new QPushButton("Submit", updateDialog);
-    connect(submitButton, &QPushButton::clicked, this, &MainWindow::updateTask);
+    // Check if any items are selected
+    if (selectionModel->hasSelection()) {
+        auto current = ui->tableView->currentIndex().model();
+        int row = ui->tableView->currentIndex().row();
+        updateDialog = new QDialog(this);
+        updateDialog->setWindowTitle("Update Selected Task");
+        updateDialog->setMinimumWidth(450);
 
-    updateName = new QLineEdit(updateDialog);
-    updateName->setText(current->index(row,0).data().toString());
-    updateDescription = new QLineEdit(updateDialog);
-    updateDescription->setText(current->index(row,1).data().toString());
-    updateDate = new QDateEdit(QDate::currentDate(), updateDialog);
-    updateDate->setDate(current->index(row, 2).data(Qt::UserRole).toDate());
-    updateDate->setDisplayFormat(dateFormat);
+        QPushButton* submitButton = new QPushButton("Submit", updateDialog);
+        connect(submitButton, &QPushButton::clicked, this, &MainWindow::updateTask);
 
-    QVBoxLayout* dialogLayout = new QVBoxLayout;
-    dialogLayout->addWidget(new QLabel("Name", updateDialog));
-    dialogLayout->addWidget(updateName);
-    dialogLayout->addWidget(new QLabel("Description", updateDialog));
-    dialogLayout->addWidget(updateDescription);
-    dialogLayout->addWidget(new QLabel("Date", updateDialog));
-    dialogLayout->addWidget(updateDate);
-    dialogLayout->addWidget(submitButton);
-    updateDialog->setLayout(dialogLayout);
-    updateDialog->exec();
+        updateName = new QLineEdit(updateDialog);
+        updateName->setText(current->index(row,0).data().toString());
+        updateDescription = new QLineEdit(updateDialog);
+        updateDescription->setText(current->index(row,1).data().toString());
+        updateDate = new QDateEdit(QDate::currentDate(), updateDialog);
+        updateDate->setDate(current->index(row, 2).data(Qt::UserRole).toDate());
+        updateDate->setDisplayFormat(dateFormat);
 
-    delete submitButton;
-    delete dialogLayout;
-    submitButton = nullptr;
-    dialogLayout = nullptr;
+        QVBoxLayout* dialogLayout = new QVBoxLayout;
+        dialogLayout->addWidget(new QLabel("Name", updateDialog));
+        dialogLayout->addWidget(updateName);
+        dialogLayout->addWidget(new QLabel("Description", updateDialog));
+        dialogLayout->addWidget(updateDescription);
+        dialogLayout->addWidget(new QLabel("Date", updateDialog));
+        dialogLayout->addWidget(updateDate);
+        dialogLayout->addWidget(submitButton);
+        updateDialog->setLayout(dialogLayout);
+        updateDialog->exec();
+        delete submitButton;
+        delete dialogLayout;
+        submitButton = nullptr;
+        dialogLayout = nullptr;
+    } else {
+        QMessageBox::information(
+            ui->tableView,
+            "No Selection",
+            "Please select a field in the table."
+        );
+    }
 }
 
 // insert into table after
@@ -313,29 +332,46 @@ void MainWindow::on_ResetPushButton_clicked()
 // mark as done functionality
 void MainWindow::on_DonePushButton_clicked()
 {
-    int selectedRow = ui->tableView->currentIndex().row();
-    QMessageBox::StandardButton confirmation;
+    QItemSelectionModel* selectionModel = ui->tableView->selectionModel();
+    if (selectionModel->hasSelection()) {
+        int selectedRow = ui->tableView->currentIndex().row();
+        QMessageBox::StandardButton confirmation;
 
-    confirmation = QMessageBox::question(this, "Confirm Marking", "Are you sure you want to mark as Done?", QMessageBox::Yes | QMessageBox::No);
-    if( confirmation == QMessageBox::Yes){
-        model->setData(model->index(selectedRow, 3), "Done");
-        model->submitAll();
-        model->select();
+        confirmation = QMessageBox::question(this, "Confirm Marking", "Are you sure you want to mark as Done?", QMessageBox::Yes | QMessageBox::No);
+        if( confirmation == QMessageBox::Yes){
+            model->setData(model->index(selectedRow, 3), "Done");
+            model->submitAll();
+            model->select();
+        }
+    } else {
+        QMessageBox::information(
+            ui->tableView,
+            "No Selection",
+            "Please select a field in the table."
+        );
     }
 }
 
 // mark as in progress functionality
 void MainWindow::on_MarkInProgressPushButton_clicked()
 {
-    int selectedRow = ui->tableView->currentIndex().row();
-    QMessageBox::StandardButton confirmation;
+    QItemSelectionModel* selectionModel = ui->tableView->selectionModel();
+    if (selectionModel->hasSelection()) {
+        int selectedRow = ui->tableView->currentIndex().row();
+        QMessageBox::StandardButton confirmation;
+        confirmation = QMessageBox::question(this, "Confirm Marking", "Are you sure you want to mark as In Progress?", QMessageBox::Yes | QMessageBox::No);
 
-    confirmation = QMessageBox::question(this, "Confirm Marking", "Are you sure you want to mark as In Progress?", QMessageBox::Yes | QMessageBox::No);
-
-    if( confirmation == QMessageBox::Yes){
-        model->setData(model->index(selectedRow, 3), "In Progress");
-        model->submitAll();
-        model->select();
+        if( confirmation == QMessageBox::Yes){
+            model->setData(model->index(selectedRow, 3), "In Progress");
+            model->submitAll();
+            model->select();
+        }
+    } else {
+        QMessageBox::information(
+            ui->tableView,
+            "No Selection",
+            "Please select a field in the table."
+            );
     }
 }
 
