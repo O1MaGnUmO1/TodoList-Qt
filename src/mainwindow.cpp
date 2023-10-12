@@ -10,8 +10,6 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QColor>
-#include <QStandardItemModel>
-#include <QItemDelegate>
 
 CustomDelegate::CustomDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
@@ -108,6 +106,9 @@ void MainWindow::on_actionDelete_Task_triggered()
     confirmation = QMessageBox::question(this, "Confirm Deletion", "Are you sure you want to delete this row?", QMessageBox::Yes | QMessageBox::No);
     if( confirmation == QMessageBox::Yes){
         model->removeRow(selectedRow);
+        ui->tableView->setVisible(false);
+        ui->tableView->resizeColumnsToContents();
+        ui->tableView->setVisible(true);
         model->select();
     }
 }
@@ -200,6 +201,9 @@ void MainWindow::insertTask()
     model->setData(model->index(row, 2), taskDate.toString(dateFormat));
     model->setData(model->index(row, 3), stateComboBox->currentText());
     if (model->submitAll()){
+        ui->tableView->setVisible(false);
+        ui->tableView->resizeColumnsToContents();
+        ui->tableView->setVisible(true);
         model->select();
     }
     else{
@@ -221,6 +225,9 @@ void MainWindow::updateTask()
     model->setData(model->index(currentRow, 1), description);
     model->setData(model->index(currentRow, 2), taskDate.toString(dateFormat));
     if (model->submitAll()){
+        ui->tableView->setVisible(false);
+        ui->tableView->resizeColumnsToContents();
+        ui->tableView->setVisible(true);
         model->select();
     }
     else{
