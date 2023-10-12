@@ -68,21 +68,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-    // delete query;
-    // delete model;
-    // delete insertionDialog;
-    // delete nameLineEdit;
-    // delete descriptionLineEdit;
-    // delete dateEdit;
-    // delete stateComboBox;
-    // delete updateDialog;
-    // delete updateName;
-    // delete updateDescription;
-    // delete updateDate;
-    // delete currentState;
-    // delete dateDialog;
-    // delete startDateEdit;
-    // delete endDateEdit;
 }
 
 
