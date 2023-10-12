@@ -125,7 +125,7 @@ void MainWindow::showInsertionDialog() {
     QPushButton* submitButton = new QPushButton("Submit", insertionDialog);
     connect(submitButton, &QPushButton::clicked, this, &MainWindow::insertTask);
 
-    QVBoxLayout* dialogLayout = new QVBoxLayout();
+    QVBoxLayout* dialogLayout = new QVBoxLayout(insertionDialog);
     dialogLayout->addWidget(new QLabel("Name", insertionDialog));
     dialogLayout->addWidget(nameLineEdit);
     dialogLayout->addWidget(new QLabel("Description", insertionDialog));
@@ -138,10 +138,6 @@ void MainWindow::showInsertionDialog() {
 
     insertionDialog->setLayout(dialogLayout);
     insertionDialog->exec();
-    delete submitButton;
-    delete dialogLayout;
-    submitButton = nullptr;
-    dialogLayout = nullptr;
 }
 
 // Functionality of showing update dialog when we want to update task
@@ -168,7 +164,7 @@ void MainWindow::showUpdateDialog()
         updateDate->setDate(current->index(row, 2).data(Qt::UserRole).toDate());
         updateDate->setDisplayFormat(dateFormat);
 
-        QVBoxLayout* dialogLayout = new QVBoxLayout;
+        QVBoxLayout* dialogLayout = new QVBoxLayout(updateDialog);
         dialogLayout->addWidget(new QLabel("Name", updateDialog));
         dialogLayout->addWidget(updateName);
         dialogLayout->addWidget(new QLabel("Description", updateDialog));
@@ -178,10 +174,6 @@ void MainWindow::showUpdateDialog()
         dialogLayout->addWidget(submitButton);
         updateDialog->setLayout(dialogLayout);
         updateDialog->exec();
-        delete submitButton;
-        delete dialogLayout;
-        submitButton = nullptr;
-        dialogLayout = nullptr;
     } else {
         QMessageBox::information(
             ui->tableView,
@@ -252,8 +244,6 @@ void MainWindow::on_NamePushButton_clicked()
 void MainWindow::on_DescriptionPushButton_clicked()
 {
     model->setSort(model->fieldIndex("Description"), Qt::AscendingOrder);
-
-    // Apply the filter
     model->select();
 }
 
@@ -280,7 +270,7 @@ void MainWindow::showFilterByDateDialog(){
     startDateEdit->setDisplayFormat(dateFormat);
     endDateEdit->setDisplayFormat(dateFormat);
 
-    QVBoxLayout* dialogLayout = new QVBoxLayout;
+    QVBoxLayout* dialogLayout = new QVBoxLayout(dateDialog);
     dialogLayout->addWidget(new QLabel("From", dateDialog));
     dialogLayout->addWidget(startDateEdit);
     dialogLayout->addWidget(new QLabel("To", dateDialog));
@@ -289,10 +279,6 @@ void MainWindow::showFilterByDateDialog(){
     dateDialog->setLayout(dialogLayout);
 
     dateDialog->exec();
-    delete submitButton;
-    delete dialogLayout;
-    submitButton = nullptr;
-    dialogLayout = nullptr;
 }
 
 // filter by date functionality

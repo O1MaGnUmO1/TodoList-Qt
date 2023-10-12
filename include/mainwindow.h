@@ -32,7 +32,6 @@ public:
     void showInsertionDialog();
     void showUpdateDialog();
     void showFilterByDateDialog();
-    void moveCenter();
     ~MainWindow();
 private slots:
     void on_actionAdd_Task_triggered();
@@ -47,7 +46,6 @@ private slots:
     void on_ResetPushButton_clicked();
     void on_DonePushButton_clicked();
     void on_MarkInProgressPushButton_clicked();
-
 
     void insertTask();
     void updateTask();
